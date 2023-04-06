@@ -24,22 +24,16 @@ resource "aws_route_table" "public" {
   }
 }
 
-# resource "aws_route_table_association" "private_us_east_1a" {
-#   subnet_id      = aws_subnet.private_us_east_1a.id
-#   route_table_id = aws_route_table.private.id
-# }
+resource "aws_route_table_association" "private" {
+  count = length(var.private_subnets)
 
-# resource "aws_route_table_association" "private_us_east_1b" {
-#   subnet_id      = aws_subnet.private_us_east_1b.id
-#   route_table_id = aws_route_table.private.id
-# }
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private.id
+}
 
-# resource "aws_route_table_association" "public_us_east_1a" {
-#   subnet_id      = aws_subnet.public_us_east_1a.id
-#   route_table_id = aws_route_table.public.id
-# }
+resource "aws_route_table_association" "public" {
+  count = length(var.public_subnets)
 
-# resource "aws_route_table_association" "public_us_east_1b" {
-#   subnet_id      = aws_subnet.public_us_east_1b.id
-#   route_table_id = aws_route_table.public.id
-# }
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
