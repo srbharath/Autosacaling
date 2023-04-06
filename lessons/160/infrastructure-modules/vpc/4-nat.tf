@@ -2,7 +2,7 @@ resource "aws_eip" "this" {
   vpc = true
 
   tags = {
-    Name = "dev-nat"
+    Name = "${var.env}-nat"
   }
 }
 
@@ -11,7 +11,7 @@ resource "aws_nat_gateway" "this" {
   subnet_id     = aws_subnet.public_us_east_1a.id
 
   tags = {
-    Name = "dev-nat"
+    Name = "${var.env}-nat"
   }
 
   depends_on = [aws_internet_gateway.this]
