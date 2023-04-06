@@ -3,6 +3,8 @@ provider "aws" {
 }
 
 terraform {
+  required_version = ">= 1.0"
+
   backend "local" {
     path = "staging/vpc/terraform.tfstate"
   }
