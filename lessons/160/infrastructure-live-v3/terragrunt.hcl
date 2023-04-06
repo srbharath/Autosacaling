@@ -1,4 +1,3 @@
-
 remote_state {
   backend = "local"
   generate = {
@@ -9,4 +8,15 @@ remote_state {
   config = {
     path = "${path_relative_to_include()}/terraform.tfstate"
   }
+}
+
+generate "provider" {
+  path = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+
+  contents = <<EOF
+provider "aws" {
+    region = "us-east-2"
+}
+EOF
 }

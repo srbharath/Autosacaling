@@ -1,7 +1,7 @@
 - start with plain code for vpc and multiple environments
 - convert same code to modules
 - convert to terragrunt
-
+- run multiple terraform modules at once (vpc - eks)
 - use iam role to create EKS and vpc
 
 
@@ -18,3 +18,9 @@ sources?
 - do not create modue that include all environment
 
 Use this start - https://terragrunt.gruntwork.io/docs/getting-started/quick-start/
+
+
+
+
+
+terragrunt apply --terragrunt-log-level debug --terragrunt-debug
