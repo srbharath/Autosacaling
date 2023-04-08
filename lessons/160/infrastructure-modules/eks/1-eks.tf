@@ -19,20 +19,20 @@ POLICY
 
 resource "aws_iam_role_policy_attachment" "this" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.demo.name
+  role       = aws_iam_role.this.name
 }
 
 resource "aws_eks_cluster" "this" {
-  name     = var.name
-  version  = var.version
+  name     = var.eks_name
+  version  = var.eks_version
   role_arn = aws_iam_role.this.arn
 
-  endpoint_private_access = false
-  endpoint_public_access  = true
-
   vpc_config {
+    endpoint_private_access = false
+    endpoint_public_access  = true
+
     subnet_ids = var.subnet_ids
   }
 
-  depends_on = [aws_iam_role_policy_attachment.demo_amazon_eks_cluster_policy]
+  depends_on = [aws_iam_role_policy_attachment.this]
 }

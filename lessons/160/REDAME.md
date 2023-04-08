@@ -3,6 +3,7 @@
 - convert to terragrunt
 - run multiple terraform modules at once (vpc - eks)
 - use iam role to create EKS and vpc
+- go over dependency (mention in intro)
 - hooks
 - two types of verioning the terraform mono repo
 - add To version modules, you can copy the module folder and append a version number to it. Otherwise, you might need to use some complex repository tagging to achieve versioning.
@@ -95,3 +96,11 @@ git clone git@github.com:antonputra/infrastructure-live.git
 cd infrastructure-live
 
 add provider session name
+
+
+
+the terraform_remote_state data source
+https://github.com/gruntwork-io/terragrunt-infrastructure-live-example/issues/8
+https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#dependency
+
+terragrunt run-all init
