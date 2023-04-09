@@ -180,12 +180,21 @@ cd infrastructure-live-v1/dev/vpc
 terraform init
 terraform apply
 open AWS and show VPC & subnets
+show state file from visual studio code
 
-
-
-
-
-
+copy vpc -> staging
+delete state `dev`
+rename `dev` -> `staging
+search for dev in staging folder
+tree .
+cd infrastructure-live-v1/staging/vpc/
+terraform init
+terraform apply
+open in AWS
+terraform destroy
+cd ../..
+cd dev/vpc/
+check AWS console that it was deleted
 
 
 
