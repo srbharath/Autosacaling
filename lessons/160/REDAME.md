@@ -5,12 +5,16 @@
 - use iam role to create EKS and vpc
 - go over dependency (mention in intro)
 - hooks
+- https://github.com/hashicorp/terraform/issues/516
+- secrets (https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1)
 - two types of verioning the terraform mono repo
 - add To version modules, you can copy the module folder and append a version number to it. Otherwise, you might need to use some complex repository tagging to achieve versioning.
 - Terraform Mono Repo vs. Multi Repo: The Great Debate https://www.hashicorp.com/blog/terraform-mono-repo-vs-multi-repo-the-great-debate
 
 folder structure - https://terragrunt.gruntwork.io/docs/getting-started/configuration/#formatting-hcl-files
 
+A comprehensive guide to managing secrets in your Terraform code
+https://blog.gruntwork.io/a-comprehensive-guide-to-managing-secrets-in-your-terraform-code-1d586955ace1
 
 sources?
 - modules
@@ -104,3 +108,5 @@ https://github.com/gruntwork-io/terragrunt-infrastructure-live-example/issues/8
 https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#dependency
 
 terragrunt run-all init
+terragrunt run-all plan
+terragrunt run-all apply
