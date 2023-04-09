@@ -1,4 +1,4 @@
-resource "aws_eip" "this" {
+resource "aws_eip" "nat" {
   vpc = true
 
   tags = {
@@ -6,13 +6,13 @@ resource "aws_eip" "this" {
   }
 }
 
-resource "aws_nat_gateway" "this" {
-  allocation_id = aws_eip.this.id
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public_us_east_1a.id
 
   tags = {
     Name = "dev-nat"
   }
 
-  depends_on = [aws_internet_gateway.this]
+  depends_on = [aws_internet_gateway.igw]
 }

@@ -1,3 +1,287 @@
+create `environments`
+create `environments/dev`
+create `environments/staging`
+rename it to `infrastructure-live`
+rename it to `infrastructure-live-v1`
+create `infrastructure-live-v1/dev/vpc`
+create `0-provider.tf`
+```
+provider "aws" {
+  region = "us-east-1"
+}
+
+terraform {
+  required_version = ">= 1.0"
+
+  backend "local" {
+    path = "dev/vpc/terraform.tfstate"
+  }
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.62"
+    }
+  }
+}
+```
+create `1-vpc.tf`
+```
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = "dev-main"
+  }
+}
+```
+create `2-igw.tf`
+```
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "dev-igw"
+  }
+}
+```
+create `3-subnets.tf`
+```
+resource "aws_subnet" "private_us_east_1a" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.0.0/19"
+  availability_zone = "us-east-1a"
+
+  tags = {
+    "Name"                            = "dev-private-us-east-1a"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/dev-demo"  = "owned"
+  }
+}
+
+resource "aws_subnet" "private_us_east_1b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.32.0/19"
+  availability_zone = "us-east-1b"
+
+  tags = {
+    "Name"                            = "dev-private-us-east-1b"
+    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/dev-demo"  = "owned"
+  }
+}
+
+resource "aws_subnet" "public_us_east_1a" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.64.0/19"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = true
+
+  tags = {
+    "Name"                           = "dev-public-us-east-1a"
+    "kubernetes.io/role/elb"         = "1"
+    "kubernetes.io/cluster/dev-demo" = "owned"
+  }
+}
+
+resource "aws_subnet" "public_us_east_1b" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.96.0/19"
+  availability_zone       = "us-east-1b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    "Name"                           = "dev-public-us-east-1b"
+    "kubernetes.io/role/elb"         = "1"
+    "kubernetes.io/cluster/dev-demo" = "owned"
+  }
+}
+```
+create `4-nat.tf`
+```
+resource "aws_eip" "nat" {
+  vpc = true
+
+  tags = {
+    Name = "dev-nat"
+  }
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public_us_east_1a.id
+
+  tags = {
+    Name = "dev-nat"
+  }
+
+  depends_on = [aws_internet_gateway.igw]
+}
+```
+create `5-routes.tf`
+```
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+
+  tags = {
+    Name = "dev-private"
+  }
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = "dev-public"
+  }
+}
+
+resource "aws_route_table_association" "private_us_east_1a" {
+  subnet_id      = aws_subnet.private_us_east_1a.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "private_us_east_1b" {
+  subnet_id      = aws_subnet.private_us_east_1b.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "public_us_east_1a" {
+  subnet_id      = aws_subnet.public_us_east_1a.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "public_us_east_1b" {
+  subnet_id      = aws_subnet.public_us_east_1b.id
+  route_table_id = aws_route_table.public.id
+}
+```
+create `6-outputs.tf`
+```
+output "vpc_id" {
+  value = aws_vpc.main.id
+}
+```
+tree .
+cd infrastructure-live-v1/dev/vpc
+terraform init
+terraform apply
+open AWS and show VPC & subnets
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 - start with plain code for vpc and multiple environments
 - convert same code to modules
 - convert to terragrunt
