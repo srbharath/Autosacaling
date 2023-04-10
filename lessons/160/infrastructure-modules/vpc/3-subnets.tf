@@ -1,4 +1,3 @@
-
 resource "aws_subnet" "private" {
   count = length(var.private_subnets)
 
