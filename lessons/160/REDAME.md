@@ -196,23 +196,208 @@ cd ../..
 cd dev/vpc/
 check AWS console that it was deleted
 
+## Refactor to Terraform modules | convert terraform code to module
+
+create `infrastructure-modules`
+copy `vpc` folder to `infrastructure-modules`
+delete `dev` and `lock`
+rename `0-provider.tf` -> `0-versions.tf`
+remove provider
+remove backend block
+create `7-variables.tf`
+```
+variable "env" {
+  description = "Environment name."
+  type        = string
+}
+
+variable "vpc_cidr_block" {
+  description = "CIDR (Classless Inter-Domain Routing)."
+  type        = string
+  default     = "10.0.0.0/16"
+}
+```
+
+update `vpc_cidr_block`
+update `1-vpc.tf` to include variable
+```
+Name = "${var.env}-main"
+```
+replace vpc resource variable to `this`
+
+`2-igw.tf`
+replace to `this`
+replace Name tag
+
+`3-subnets.tf`
+remove content
+add variables
+```
+variable "azs" {
+  description = "Availability zones for subnets."
+  type        = list(string)
+}
+
+variable "private_subnets" {
+  description = "CIDR ranges for private subnets."
+  type        = list(string)
+}
+
+variable "public_subnets" {
+  description = "CIDR ranges for public subnets."
+  type        = list(string)
+}
+
+variable "private_subnet_tags" {
+  description = "Private subnet tags."
+  type        = map(any)
+}
+
+variable "public_subnet_tags" {
+  description = "Private subnet tags."
+  type        = map(any)
+}
+```
+`3-subnets.tf`
+```
+resource "aws_subnet" "private" {
+  count = length(var.private_subnets)
+
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = var.private_subnets[count.index]
+  availability_zone = var.azs[count.index]
+
+  tags = merge(
+    { Name = "${var.env}-private-${var.azs[count.index]}" },
+    var.private_subnet_tags
+  )
+}
+
+resource "aws_subnet" "public" {
+  count = length(var.public_subnets)
+
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = var.public_subnets[count.index]
+  availability_zone = var.azs[count.index]
+
+  tags = merge(
+    { Name = "${var.env}-public-${var.azs[count.index]}" },
+    var.public_subnet_tags
+  )
+}
+```
+
+`4-nat.tf`
+update `this`
+Name tags
+
+`5-routes.tf`
 
 
+update `6-outputs.tf`
 
+```
+output "private_subnet_ids" {
+  value = aws_subnet.private[*].id
+}
 
+output "public_subnet_ids" {
+  value = aws_subnet.public[*].id
+}
+```
 
+create `infrastructure-live-v2`
+create `dev`
+create `staging`
+create `dev/vpc`
+create `main.tf`
+```
+provider "aws" {
+  region = "us-east-1"
+}
 
+terraform {
+  backend "local" {
+    path = "dev/vpc/terraform.tfstate"
+  }
+}
 
+module "vpc" {
+  source = "../../../infrastructure-modules/vpc"
 
+  env             = "dev"
+  azs             = ["us-east-1a", "us-east-1b"]
+  private_subnets = ["10.0.0.0/19", "10.0.32.0/19"]
+  public_subnets  = ["10.0.64.0/19", "10.0.96.0/19"]
 
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+    "kubernetes.io/cluster/dev-demo"  = "owned"
+  }
 
+  public_subnet_tags = {
+    "kubernetes.io/role/elb"         = 1
+    "kubernetes.io/cluster/dev-demo" = "owned"
+  }
+}
+```
+create `outputs.tf`
+```
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
 
+output "private_subnet_ids" {
+  value = module.vpc.private_subnet_ids
+}
 
+output "public_subnet_ids" {
+  value = module.vpc.public_subnet_ids
+}
+```
 
+tree . | less
+cd dev/vpc
+terraform init
+terraform apply
 
+copy vpc to staging and replace `dev`
+```
+provider "aws" {
+  region = "us-east-1"
+}
 
+terraform {
+  backend "local" {
+    path = "dev/vpc/terraform.tfstate"
+  }
+}
 
+module "vpc" {
+  source = "../../../infrastructure-modules/vpc"
 
+  env             = "dev"
+  azs             = ["us-east-1a", "us-east-1b"]
+  private_subnets = ["10.0.0.0/19", "10.0.32.0/19"]
+  public_subnets  = ["10.0.64.0/19", "10.0.96.0/19"]
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+    "kubernetes.io/cluster/dev-demo"  = "owned"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/role/elb"         = 1
+    "kubernetes.io/cluster/dev-demo" = "owned"
+  }
+}
+```
+
+terraform init
+terraform apply
+check in AWS console that we have similar result
+destroy both
+check in AWS that all destroyed
 
 
 
