@@ -410,6 +410,86 @@ check in AWS that all destroyed
 
 
 
+## Terragrunt
+
+create `infrastructure-live-v3`
+create `infrastructure-live-v3/terragrunt.hcl`
+```
+remote_state {
+  backend = "local"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+
+  config = {
+    path = "${path_relative_to_include()}/terraform.tfstate"
+  }
+}
+
+generate "provider" {
+  path = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+
+  contents = <<EOF
+provider "aws" {
+    region = "us-east-1"
+}
+EOF
+}
+```
+create `infrastructure-live-v3/dev`
+create `infrastructure-live-v3/staging`
+create `infrastructure-live-v3/dev/vpc`
+create `infrastructure-live-v3/dev/vpc/terragrunt.hcl`
+```
+terraform {
+  source = "../../../infrastructure-modules/vpc"
+}
+
+include "root" {
+  path = find_in_parent_folders()
+}
+
+inputs = {
+  env             = "dev"
+  azs             = ["us-east-2a", "us-east-2b"]
+  private_subnets = ["10.0.0.0/19", "10.0.32.0/19"]
+  public_subnets  = ["10.0.64.0/19", "10.0.96.0/19"]
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+    "kubernetes.io/cluster/dev-demo"  = "owned"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/role/elb"         = 1
+    "kubernetes.io/cluster/dev-demo" = "owned"
+  }
+}
+```
+show how to install terragrunt
+cd infrastructure-live-v3/dev/vpc
+terragrunt init
+terragrunt apply
+open infrastructure-live-v3/dev/vpc/terragrunt.hcl to show state declaration
+show state file under `.terragrunt-cache`
+
+create `staging/vpc`
+copy `terragrunt.hcl` to `staging/vpc`
+replace dev to staging
+`cd ../..`
+`cd staging/vpc`
+terragrunt init
+terragrunt apply
+
+show the state file for staging
+show VPC in aws console
+
+cd ../..
+tree .
+terragrunt run-all destroy
+check in AWS console that all were destroyred
 
 
 
