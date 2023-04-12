@@ -11,7 +11,7 @@ inputs = {
   enable_cluster_autoscaler = true
 }
 
-dependency "vpc" {
+dependency "eks" {
   config_path = "../eks"
 
   mock_outputs = {
