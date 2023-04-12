@@ -6,7 +6,14 @@ include "root" {
   path = find_in_parent_folders()
 }
 
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
+}
+
 inputs = {
+  env      = include.env.locals.env
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
