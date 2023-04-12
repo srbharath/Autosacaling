@@ -6,9 +6,16 @@ include "root" {
   path = find_in_parent_folders()
 }
 
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
+}
+
 inputs = {
   eks_version = "1.25"
-  eks_name    = "dev-demo"
+  env         = include.env.locals.env
+  eks_name    = "demo"
   subnet_ids  = dependency.vpc.outputs.private_subnet_ids
 
   node_groups = {

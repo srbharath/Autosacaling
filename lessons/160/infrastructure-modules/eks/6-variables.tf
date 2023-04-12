@@ -1,3 +1,8 @@
+variable "env" {
+  description = "Environment name."
+  type        = string
+}
+
 variable "eks_version" {
   description = "Desired Kubernetes master version."
   type        = string
