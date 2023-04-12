@@ -706,3 +706,8 @@ terragrunt run-all apply --terragrunt-exclude-dir kubernetes-addons
 https://github.com/gruntwork-io/terragrunt/issues/2225
 
 https://twitter.com/i/spaces/1djGXldPqNyGZ?s=20
+
+kubectl get nodes
+kubectl describe pod nginx-94b9c7966-nc9wj
+watch -t kubectl get pods
+watch -t kubectl get nodes
