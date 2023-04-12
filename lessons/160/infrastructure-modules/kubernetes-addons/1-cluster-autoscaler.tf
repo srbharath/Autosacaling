@@ -65,7 +65,7 @@ resource "aws_iam_role_policy_attachment" "cluster_autoscaler" {
   policy_arn = aws_iam_policy.cluster_autoscaler[0].arn
 }
 
-resource "helm_release" "autoscaler" {
+resource "helm_release" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
 
   name = "autoscaler"
