@@ -24,13 +24,13 @@ resource "aws_iam_role" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
 
   assume_role_policy = data.aws_iam_policy_document.cluster_autoscaler.json
-  name               = "${var.env}-${var.eks_name}-cluster-autoscaler"
+  name               = "${var.eks_name}-cluster-autoscaler"
 }
 
 resource "aws_iam_policy" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
 
-  name = "${var.env}-${var.eks_name}-cluster-autoscaler"
+  name = "${var.eks_name}-cluster-autoscaler"
 
   policy = jsonencode({
     Version = "2012-10-17"
