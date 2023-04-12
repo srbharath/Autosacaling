@@ -28,7 +28,8 @@ resource "aws_iam_role" "cluster_autoscaler" {
 }
 
 resource "aws_iam_policy" "cluster_autoscaler" {
-  name = "ClusterAutoscaler"
+  count = var.enable_cluster_autoscaler ? 1 : 0
+  name  = "ClusterAutoscaler"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -60,8 +61,8 @@ resource "aws_iam_policy" "cluster_autoscaler" {
 resource "aws_iam_role_policy_attachment" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
 
-  role       = aws_iam_role.autoscaler.name
-  policy_arn = aws_iam_policy.cluster_autoscaler.arn
+  role       = aws_iam_role.cluster_autoscaler[0].name
+  policy_arn = aws_iam_policy.cluster_autoscaler[0].arn
 }
 
 resource "helm_release" "autoscaler" {
