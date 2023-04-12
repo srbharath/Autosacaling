@@ -9,7 +9,7 @@ include "root" {
 inputs = {
   eks_version = "1.25"
   eks_name    = "dev-demo"
-  subnet_ids = dependency.vpc.outputs.private_subnet_ids
+  subnet_ids  = dependency.vpc.outputs.private_subnet_ids
 
   node_groups = {
     general = {
@@ -26,4 +26,8 @@ inputs = {
 
 dependency "vpc" {
   config_path = "../vpc"
+
+  mock_outputs = {
+    private_subnet_ids = ["subnet-1234", "subnet-5678"]
+  }
 }
