@@ -9,10 +9,9 @@ variable "enable_cluster_autoscaler" {
   default     = false
 }
 
-variable "load_balancer_controller" {
-  description = "Determines whether to deploy Load Balancer Controller"
+variable "cluster_autoscaler_helm_verion" {
+  description = "Cluster Autoscaler Helm verion"
   type        = bool
-  default     = false
 }
 
 variable "openid_provider_arn" {
