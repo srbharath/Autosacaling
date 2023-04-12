@@ -14,3 +14,8 @@ variable "load_balancer_controller" {
   type        = bool
   default     = false
 }
+
+variable "openid_provider_arn" {
+  description = "IAM Openid Connect Provider ARN"
+  type        = string
+}
