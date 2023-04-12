@@ -668,3 +668,22 @@ https://terragrunt.gruntwork.io/docs/reference/config-blocks-and-attributes/#dep
 terragrunt run-all init
 terragrunt run-all plan
 terragrunt run-all apply
+
+
+
+
+
+
+
+
+
+
+
+
+## Develop Teraform Code to Create VPC
+## Convert VPC Terraform Code into Module
+## Use Terragrunt to Create VPC
+
+
+
+terragrunt hclfmt
