@@ -8,6 +8,7 @@ include "root" {
 
 inputs = {
   eks_name = dependency.eks.outputs.eks_name
+  openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
   enable_cluster_autoscaler      = true
   cluster_autoscaler_helm_verion = "9.28.0"

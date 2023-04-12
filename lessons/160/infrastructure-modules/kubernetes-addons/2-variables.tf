@@ -11,7 +11,7 @@ variable "enable_cluster_autoscaler" {
 
 variable "cluster_autoscaler_helm_verion" {
   description = "Cluster Autoscaler Helm verion"
-  type        = bool
+  type        = string
 }
 
 variable "openid_provider_arn" {
