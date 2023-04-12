@@ -694,3 +694,15 @@ terragrunt hclfmt
 
 
 helm repo add autoscaler https://kubernetes.github.io/autoscaler
+add hooks
+
+https://github.com/gruntwork-io/terragrunt/issues/1996
+https://github.com/gruntwork-io/terragrunt/issues/1822
+SOLUTION - https://github.com/gruntwork-io/terragrunt/issues/1822
+
+terragrunt run-all plan --terragrunt-exclude-dir kubernetes-addons
+terragrunt run-all apply --terragrunt-exclude-dir kubernetes-addons
+
+https://github.com/gruntwork-io/terragrunt/issues/2225
+
+https://twitter.com/i/spaces/1djGXldPqNyGZ?s=20
