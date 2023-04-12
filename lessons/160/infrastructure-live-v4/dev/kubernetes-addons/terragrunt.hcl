@@ -7,9 +7,9 @@ include "root" {
 }
 
 inputs = {
-  eks_name  = dependency.eks.outputs.eks_name
-  
-  enable_cluster_autoscaler = true
+  eks_name = dependency.eks.outputs.eks_name
+
+  enable_cluster_autoscaler      = true
   cluster_autoscaler_helm_verion = "9.28.0"
 }
 
@@ -17,7 +17,7 @@ dependency "eks" {
   config_path = "../eks"
 
   mock_outputs = {
-    eks_name = "demo"
+    eks_name            = "demo"
     openid_provider_arn = "arn:aws:iam::123456789012:oidc-provider"
   }
 }
