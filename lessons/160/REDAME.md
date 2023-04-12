@@ -687,3 +687,10 @@ terragrunt run-all apply
 
 
 terragrunt hclfmt
+
+
+
+
+
+
+helm repo add autoscaler https://kubernetes.github.io/autoscaler
